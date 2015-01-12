@@ -1,0 +1,103 @@
+/* Number of repetitions */
+input.repetitions {
+    width: 50px;
+}
+
+.btn {
+    cursor: pointer;
+}
+
+/* Workout Sets */
+.warm_up {
+    background-color: aqua;
+}
+.pre_set {
+    background-color: yellow;
+}
+.main_set {
+    background-color: green;
+}
+.cool_down {
+    background-color: blue;
+}
+
+table.workoutSet_table {
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+table.workoutSet_table th {
+    border: 1px solid;
+}
+.workoutSet_col1 {
+    width: 10%;
+    text-align: center;
+}
+.workoutSet_col2 {
+    width: 70%;
+}
+.workoutSet_col3 {
+    width: 20%;
+    text-align: center;
+}
+
+ul.workoutSets {
+    list-style: none;
+    padding: 0px;
+}
+ul.workoutSets li {
+    border: 1px dashed;
+    margin-bottom: 2px;
+}
+ul.workoutSets table th{
+    text-align: center;
+}
+
+/* Exercise Sets */
+table.exerciseSet_table {
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+    
+    border: 1px solid;
+    margin-bottom: 1px;
+    
+}
+table.exerciseSet_table th {
+    border: 1px solid;
+}
+.exerciseSet_col1 {
+    width: 10%;
+    text-align: center;
+}
+.exerciseSet_col2 {
+    width: 60%;
+}
+.exerciseSet_col3 {
+    width: 30%;
+    text-align: center;
+}
+ul.exerciseSets {
+    list-style: none;
+    padding: 0px;
+}
+ul.exerciseSets li {
+    padding: 0px;
+    margin: 0px;
+}
+
+/* Sort Exercise Set Button */
+span.exerciseSetMove_btn {
+  display: inline;
+  border: 1px solid;
+  margin-bottom: 2px;
+}
+
+
+/* Exercise */
+input.exercise_distance {
+    width: 50px;
+}
+input.exercise_interval {
+    width: 50px;
+}
