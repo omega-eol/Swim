@@ -10,7 +10,7 @@ class Workout(models.Model):
     description = models.CharField(max_length=2048, default="", blank=True)
     
     # date and time when the current Workout was created 
-    crated_at = models.DateTimeField(default=datetime.now)
+    created_at = models.DateTimeField(default=datetime.now)
     
     # author
     user = models.ForeignKey(User)

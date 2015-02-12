@@ -1,6 +1,6 @@
-from django.conf.urls import patterns, include, url
-from swim import views
+from django.conf.urls import patterns, url
+from swim.views import IndexView
 
 urlpatterns = patterns('',
-    url(r'^workouts', views.workouts, name='workouts'),
+    
 )

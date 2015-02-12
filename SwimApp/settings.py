@@ -26,6 +26,7 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+#APPEND_SLASH = False
 
 # Application definition
 
@@ -55,7 +56,8 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        #'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+        'rest_framework.permissions.AllowAny'
     ]
 }
 
@@ -63,6 +65,7 @@ ROOT_URLCONF = 'SwimApp.urls'
 
 WSGI_APPLICATION = 'SwimApp.wsgi.application'
 
+APPEND_SLASH=False
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
@@ -92,3 +95,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'templates'),
+)
+
+

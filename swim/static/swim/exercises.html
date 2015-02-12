@@ -1,0 +1,55 @@
+        <div ng-controller="ExerciseTestCtrl">
+            <h3>Exercise:</h3>
+		    {{exercise.interval}} - {{exercise.print()}}
+            
+            <form>
+            	Distance: <input type="number" ng-model="exercise.distance" /><br />
+			    Stroke: <input type="text" ng-model="exercise.stroke" /><br />
+			    Type: <input type="text" ng-model="exercise.type"/><br/>
+			    Interval: <input type="number" ng-model="exercise.interval"/>
+			    <input type="submit" ng-click="update(exercise)" value="Save" />
+            </form>
+            
+            <h3>Exercises</h3>
+            <ul>
+            	<li ng-repeat="ex in exercises">
+            		{{ex.id}}: {{ex.print()}} - 
+            		<span title="Remove Exercise" class="fa fa-remove btn" ng-click="remove(ex, $index)"></span>
+            	</li>
+            </ul>
+            
+            <h4>Add an Exercise</h4>
+            <form>
+            	Distance: <input type="number" ng-model="new_exercise.distance" /><br />
+			    Stroke: <input type="text" ng-model="new_exercise.stroke" /><br />
+			    Type: <input type="text" ng-model="new_exercise.type"/><br/>
+			    Interval: <input type="number" ng-model="new_exercise.interval"/></br>
+			    <input type="submit" ng-click="create(new_exercise)" value="Create" />
+            </form>
+        </div>
+
+		<div ng-controller="ExerciseSetTestCtrl">
+            <h3>Exercise Sets</h3>
+		    <ul>
+                <li ng-repeat="exerciseSet in exerciseSets">
+                {{exerciseSet.id}} - {{exerciseSet.printDistance()}} - {{exerciseSet.printInterval()}}</br>
+                Exercise: {{exerciseSet.exercise.print()}}
+                </li>
+            </ul>
+            
+            <h3>Add an Exercise</h3>
+            <form>
+            	Repetition: <input type="number" ng-model="new_exerciseSet.repetitions" /><br />
+            	Order: <input type="number" ng-model="new_exerciseSet.order" /><br />
+            	WorkoutSet_ID: <input type="number" ng-model="new_exerciseSet.workoutSet.id"/>
+            	Exercise:<br/><br/>
+            
+				Distance: <input type="number" ng-model="new_exerciseSet.exercise.distance" /><br />
+			    Stroke: <input type="text" ng-model="new_exerciseSet.exercise.stroke" /><br />
+			    Type: <input type="text" ng-model="new_exerciseSet.exercise.type"/><br/>
+			    Interval: <input type="number" ng-model="new_exerciseSet.exercise.interval"/></br>
+			     
+			    <input type="submit" ng-click="create(new_exerciseSet)" value="Create" />
+            </form>
+             
+        </div>

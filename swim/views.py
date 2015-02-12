@@ -1,5 +1,10 @@
-from django.shortcuts import render
-from django.http.response import HttpResponse
+from django.views.generic.base import TemplateView
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import ensure_csrf_cookie
 
-def workouts(request):
-    return HttpResponse('Hello There!')
+class IndexView(TemplateView):
+    template_name = 'index.html'
+    
+    @method_decorator(ensure_csrf_cookie)
+    def dispatch(self, request, *args, **kwargs):
+        return super(IndexView, self).dispatch(request, *args, **kwargs)

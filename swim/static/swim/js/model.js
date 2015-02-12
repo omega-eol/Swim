@@ -3,6 +3,27 @@ var ExerciseStrokes = ["Free", "Breast", "IM", "Fly"];
 var ExerciseTypes = ["Swim", "Drill", "Kick"];
 var WorkoutSetTypes = ["Warm Up", "Pre Set", "Main Set", "Cool Down"];
 
+var User = function (first_name, last_name) {
+	this.first_name = first_name;
+	this.last_name = last_name;
+	
+	this.full_name = function() {
+		return this.first_name + " " + this.last_name;
+	};
+	
+	this.parse = function(s) {
+		this.first_name = s.first_name;
+		this.last_name = s.last_name;
+	};
+	
+	this.toJSON = function() {
+		return {
+			first_name: this.first_name,
+			last_name: this.last_name
+		};
+	};
+};
+
 var Exercise = function (distance, stroke, type, interval) {
     this.id = 0;
     this.distance = distance;
@@ -11,6 +32,25 @@ var Exercise = function (distance, stroke, type, interval) {
     this.interval = interval;
 
     /* Functions */
+    // parse object from back-end
+    this.parse = function(s) {
+    	this.id = s.id;
+        this.distance = s.distance;
+        this.stroke = s.stroke;
+        this.type = s.type;
+        this.interval = s.interval;
+    };
+    
+    // transform object to back-end
+    this.toJSON = function() {
+    	return {
+    		distance: this.distance,
+    		stroke: this.stroke,
+    		type: this.type,
+    		interval: this.interval
+    	};
+    };
+    
     this.clone = function () {
         return new Exercise(this.distance, this.stroke, this.type, this.interval);
     };
@@ -36,6 +76,10 @@ var Exercise = function (distance, stroke, type, interval) {
         return true;
     };
 
+    this.print = function () {
+    	return this.distance + " meters " + this.stroke + " " + this.type + " in " + this.interval + " seconds.";
+    };
+    
     console.log("A new Exercise has been created");
 };
 
@@ -49,10 +93,28 @@ var ExerciseSet = function (order, repetitions, exercise, workoutSet) {
     this.workoutSet = workoutSet;
 
     /* Functions */
+    this.parse = function(s) {
+    	this.id = s.id;
+        this.order = s.order;
+        this.repetitions = s.repetitions;
+        this.exercise = new Exercise();
+        this.exercise.parse(s.exercise);
+        // this.workoutSet must be set outside
+    }
+    
     this.clone = function () {
         return new ExerciseSet(this.order, this.repetitions, this.exercise, this.workoutSet);
     };
 
+    this.toJSON = function() {
+    	return {
+    		order: this.order,
+    		repetitions: this.repetitions,
+    		exercise: this.exercise.toJSON(),
+    		workoutSet: this.workoutSet.id
+    	};
+    };
+    
     this.distance = function () {
         return this.repetitions * this.exercise.distance;
     };
@@ -82,7 +144,41 @@ var WorkoutSet = function (order, repetitions, type, workout) {
     this.workout = workout;
 
     /* Functions */
-
+    this.parse = function(s) {
+    	this.id = s.id;
+        this.order = s.order;
+        this.repetitions = s.repetitions;
+        this.type = s.type;
+        
+        // parse exercise sets
+        var that = this;
+        angular.forEach(s.exerciseSets, function(es, index) {
+        	var exerciseSet = new ExerciseSet();
+        	exerciseSet.parse(es);
+        	exerciseSet.workoutSet = that;
+        	that.exerciseSets.push(exerciseSet);
+        });
+    };
+    
+    /* Serialize the WorkoutSet class to JSON */
+    this.toJSON = function() {
+    	return {
+    		order: this.order,
+    		repetitions: this.repetitions,
+    		type: this.type,
+    		exerciseSets: this.exerciseSetsToJSON()
+    	};
+    };
+    
+    /* Serialize set of Exercise Sets to JSON */
+    this.exerciseSetsToJSON = function() {
+    	var res = [];
+		angular.forEach(this.exerciseSets, function(exerciseSet, index) {
+			res.push(exerciseSet.toJSON());
+		});
+		return res;
+    };
+    
     /* Distance */
     this.distance = function () {
         var d = 0;
@@ -110,17 +206,62 @@ var WorkoutSet = function (order, repetitions, type, workout) {
     console.log("A new WorkoutSet has been created");
 };
 
-var Workout = function (type) {
+var Workout = function () {
     this.id = 0;
-    this.name = "Unamed Workout";
+    this.name = "";
     this.created_at = new Date();
     this.author = ""; 
     this.type = "";
+    this.description = "";
 
+    this.user = null;
     this.workoutSets = [];
 
     /* Functions */
-
+    this.parse = function(s) {
+    	// properties
+    	this.id = s.id;
+    	this.name = s.name;
+    	this.created_at = s.created_at;
+        this.author = s.author; 
+        this.type = s.type;
+        this.description = s.description;
+        
+        // user
+        this.user = new User();
+        this.user.parse(s.user);
+        
+        // workout sets
+        var that = this;
+        angular.forEach(s.workoutSets, function(ws, index) {
+        	var workoutSet = new WorkoutSet();
+        	workoutSet.parse(ws);
+        	workoutSet.workout = that;
+        	that.workoutSets.push(workoutSet);
+        });
+    };
+    
+    /* Serialization of Workout class to JSON */
+    this.toJSON = function() {
+    	return {
+			name: this.name,
+    		description: this.description,
+    		type: this.type,
+    		created_at: this.created_at,
+    		user: this.user.toJSON(),
+    		workoutSets: this.workoutSetsToJSON()
+    	};
+    };
+    
+    /* Serialize set of Workout Sets to JSON */
+    this.workoutSetsToJSON = function() {
+    	var res = [];
+		angular.forEach(this.workoutSets, function(workoutSet, index) {
+			res.push(workoutSet.toJSON());
+		});
+		return res;
+    };
+    
     /* Distance */
     this.distance = function () {
         var d = 0;
