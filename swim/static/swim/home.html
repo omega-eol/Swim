@@ -2,7 +2,8 @@
     <h3>Workout</h3>
 
     <!-- Workout Properties -->
-    <input class="workout_name" ng-model="workout.name" placeholder="Workout Name"/>
+    <input class="workout_name" ng-model="workout.name" placeholder="Workout Name"/></br>
+    <input class="workout_description" ng-model="workout.description" placeholder="Workout Description"/></br>
     created at <time>{{workout.created_at | date : short }}</time> by <span class="workout_author">{{workout.user.full_name()}}</span>
     <!-- Workout stats -->
     <ul class="workoutStats">

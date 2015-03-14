@@ -32,7 +32,9 @@
             <h3>Exercise Sets</h3>
 		    <ul>
                 <li ng-repeat="exerciseSet in exerciseSets">
-                {{exerciseSet.id}} - {{exerciseSet.printDistance()}} - {{exerciseSet.printInterval()}}</br>
+                {{exerciseSet.id}} - {{exerciseSet.printDistance()}} - {{exerciseSet.printInterval()}}
+                <span title="Remove Exercise Set" class="fa fa-remove btn" ng-click="remove(exerciseSet, $index)"></span>
+                </br>
                 Exercise: {{exerciseSet.exercise.print()}}
                 </li>
             </ul>

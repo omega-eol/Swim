@@ -6,8 +6,8 @@ controllers.WorkoutCtrl = function ($scope, $route, $routeParams, workoutFactory
 	$scope.workout = workoutFactory.get({id:1});
 	//console.log($scope.workout);
 	
-	// make w accesible in console
-	w = $scope.workout;
+	// make w accessible in console
+	//w = $scope.workout;
 	
     /* Workout Set Type */
     $scope.WorkoutSetTypes = WorkoutSetTypes;
@@ -73,7 +73,6 @@ controllers.WorkoutCtrl = function ($scope, $route, $routeParams, workoutFactory
     /* Save Workout */
     $scope.saveWorkout = function() {
     	console.log($scope.workout.toJSON());
-    	//$scope.workout.$save();
     	workoutFactory.update({ id: $scope.workout.id}, $scope.workout);
     };
     
@@ -146,8 +145,7 @@ controllers.ExerciseSetCtrl = function ($scope) {
 controllers.ExerciseTestCtrl = function ($scope, exerciseFactory) {
 	$scope.exercises = exerciseFactory.query();
 	$scope.new_exercise = new Exercise(150, "Fly", "Drill", 140);
-	
-	
+		
 	// update exercise
 	$scope.update = function(exercise) {
 		console.log(exercise);
@@ -171,7 +169,7 @@ controllers.ExerciseTestCtrl = function ($scope, exerciseFactory) {
 		
 	};
 	
-	// remove exercise
+	// remove Exercise
 	$scope.remove = function(exercise, index) {
 		console.log("About to delete the exercise..");
 		console.log(exercise);
@@ -185,7 +183,9 @@ controllers.ExerciseTestCtrl = function ($scope, exerciseFactory) {
 			alert("Cannot delete the Exercise: ", exercise.id, ".");
 		});
 	};
+	
 };
+
 controllers.ExerciseSetTestCtrl = function ($scope, exerciseSetFactory) {
 	// list of all exercise sets
 	$scope.exerciseSets = exerciseSetFactory.query();
@@ -206,6 +206,20 @@ controllers.ExerciseSetTestCtrl = function ($scope, exerciseSetFactory) {
 		}, function(error){
 			console.log(error);
 			alert("Cannot save the Exercise Set.");
+		});
+	};	
+
+	// remove Exercise Set
+	$scope.remove = function(exerciseSet, index) {
+		console.log("About to delete Exercise Set, id:" + exerciseSet.id);
+		
+		// remove Exercise Set from server
+		exerciseSet.$delete().then(function() {
+			// remove exercise set from form
+			$scope.exerciseSets.splice(index, 1);
+	        console.log("Exercise Set has been removed.");
+		}, function(exerciseSet) {
+			alert("Cannot delete the Exercise Set, id: ", exerciseSet.id, ".");
 		});
 	};
 };

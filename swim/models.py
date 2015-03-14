@@ -80,6 +80,11 @@ class ExerciseSet(models.Model):
     # Workout Set
     workoutSet = models.ForeignKey(WorkoutSet, related_name='exerciseSets')
     
+    def delete(self, *args, **kwargs):
+        self.exercise.delete() # Exercise Set will be deleted too, because of Django`s default delete: CASCADE
+        # no need to call "real" delete method on self
+        #super(ExerciseSet, self).delete(*args, **kwargs)
+    
     def __str__(self):
         return "%d %s" % (self.repetitions, self.exercise)
 

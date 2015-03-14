@@ -6,7 +6,7 @@ from rest_framework import serializers
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ('first_name', 'last_name')
+        fields = ('id', 'first_name', 'last_name')
 
 # Exercise
 class ExerciseSerializer(serializers.HyperlinkedModelSerializer):
@@ -16,7 +16,8 @@ class ExerciseSerializer(serializers.HyperlinkedModelSerializer):
 
 # Exercise Set
 class ExerciseSetSerializer(serializers.HyperlinkedModelSerializer):
-    workoutSet = serializers.PrimaryKeyRelatedField(read_only=False, queryset=WorkoutSet.objects.all())
+    workoutSet = serializers.PrimaryKeyRelatedField(read_only=True)
+    #workoutSet = serializers.PrimaryKeyRelatedField(read_only=False, queryset=WorkoutSet.objects.all())
     exercise = ExerciseSerializer()
     
     class Meta:
@@ -32,12 +33,14 @@ class ExerciseSetSerializer(serializers.HyperlinkedModelSerializer):
 
 # Workout Set
 class WorkoutSetSerializer(serializers.HyperlinkedModelSerializer):
+    #workout = serializers.PrimaryKeyRelatedField(read_only=True, queryset=Workout.objects.all())
+    workout = serializers.PrimaryKeyRelatedField(read_only=True)
     
-    exerciseSets = ExerciseSetSerializer(read_only=True, many=True)
+    exerciseSets = ExerciseSetSerializer(read_only=False, many=True)
     
     class Meta:
         model = WorkoutSet
-        fields = ('id', 'order', 'repetitions', 'type', 'exerciseSets')
+        fields = ('id', 'order', 'repetitions', 'type', 'workout', 'exerciseSets')
 
 # Workout
 class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
@@ -45,21 +48,57 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
     user = UserSerializer()
     
     # Workout Sets
-    workoutSets = WorkoutSetSerializer(read_only=True, many=True)
+    workoutSets = WorkoutSetSerializer(read_only=False, many=True)
     
     # Other fileds
     class Meta:
         model = Workout
         fields = ('id', 'name', 'description', 'type', 'created_at', 'user', 'workoutSets')
         read_only_fields = ('created_at',)
+       
+    def create(self, validated_data):
+        print('This is Workout create.')
+        return Workout.objects.get(pk=1)
         
     def update(self, instance, validated_data):
-        print(validated_data)
+        #print(validated_data)
+        backup = validated_data.copy()
+        
+        # get Workout fields
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
         
-        workoutSets = validated_data.get('workoutSets')
-        print(workoutSets)
+        # delete all workout sets
+        WorkoutSet.objects.filter(workout=instance).delete()
+        #print('All previous Workout Set has been removed')
         
+        workoutSetsDictionary = validated_data.pop('workoutSets')
+        for workoutSetDictionary in workoutSetsDictionary:
+            #print(workoutSetDictionary)
+            
+            # create new Workout Set
+            workoutSet = WorkoutSet(order = workoutSetDictionary['order'], 
+                                    repetitions = workoutSetDictionary['repetitions'],
+                                    type = workoutSetDictionary['type'],
+                                    workout = instance)
+            workoutSet.save()
+            for exerciseSetDictionary in workoutSetDictionary['exerciseSets']:
+                #print(exerciseSetDictionary)
+                
+                # create new Exercise
+                exerciseDictionary = exerciseSetDictionary['exercise']
+                exercise = Exercise(distance = exerciseDictionary['distance'],
+                                    stroke = exerciseDictionary['stroke'],
+                                    type = exerciseDictionary['type'],
+                                    interval = exerciseDictionary['interval'])
+                exercise.save()
+                # create new Exercise Set
+                exerciseSet = ExerciseSet(order = exerciseSetDictionary['order'],
+                                          repetitions = exerciseSetDictionary['repetitions'],
+                                          exercise = exercise,
+                                          workoutSet = workoutSet)
+                exerciseSet.save()
+                
+        # save Workout        
         instance.save()
         return instance

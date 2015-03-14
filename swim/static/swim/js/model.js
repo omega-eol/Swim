@@ -1,4 +1,4 @@
-/* Swim App Models */
+	/* Swim App Models */
 var ExerciseStrokes = ["Free", "Breast", "IM", "Fly"];
 var ExerciseTypes = ["Swim", "Drill", "Kick"];
 var WorkoutSetTypes = ["Warm Up", "Pre Set", "Main Set", "Cool Down"];
@@ -6,12 +6,14 @@ var WorkoutSetTypes = ["Warm Up", "Pre Set", "Main Set", "Cool Down"];
 var User = function (first_name, last_name) {
 	this.first_name = first_name;
 	this.last_name = last_name;
+	this.id = 0;
 	
 	this.full_name = function() {
 		return this.first_name + " " + this.last_name;
 	};
 	
 	this.parse = function(s) {
+		this.id = s.id;
 		this.first_name = s.first_name;
 		this.last_name = s.last_name;
 	};
@@ -44,6 +46,7 @@ var Exercise = function (distance, stroke, type, interval) {
     // transform object to back-end
     this.toJSON = function() {
     	return {
+    		//id: this.id,
     		distance: this.distance,
     		stroke: this.stroke,
     		type: this.type,
@@ -108,6 +111,7 @@ var ExerciseSet = function (order, repetitions, exercise, workoutSet) {
 
     this.toJSON = function() {
     	return {
+    		//id: this.id,
     		order: this.order,
     		repetitions: this.repetitions,
     		exercise: this.exercise.toJSON(),
@@ -163,6 +167,7 @@ var WorkoutSet = function (order, repetitions, type, workout) {
     /* Serialize the WorkoutSet class to JSON */
     this.toJSON = function() {
     	return {
+    		//id: this.id,
     		order: this.order,
     		repetitions: this.repetitions,
     		type: this.type,
@@ -244,6 +249,7 @@ var Workout = function () {
     /* Serialization of Workout class to JSON */
     this.toJSON = function() {
     	return {
+    		id: this.id,
 			name: this.name,
     		description: this.description,
     		type: this.type,

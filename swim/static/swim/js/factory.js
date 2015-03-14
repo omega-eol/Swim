@@ -43,6 +43,27 @@ swimApp.factory("workoutFactory", function($resource) {
 	return workout;
 });
 
+swimApp.factory("workoutSetFactory", function($resource) {
+	var workoutSet = $resource('/api/exerciseSets/:id/', { id: '@id' }, { 
+		get: {
+			method: 'GET',
+			isArray: false,
+			transformResponse: function(data, header) {
+				var s = angular.fromJson(data);
+				var exercise = new Exercise(s.exercise.distance, s.exercise.stroke, s.exercise.type, s.exercise.interval);
+	        	var workoutSet = null;
+	        	var exerciseSet = new ExerciseSet();
+	        	
+	        	wrapped[idx] = exerciseSet;
+	        	console.log(exerciseSet);
+		        return s;
+		    }
+		},
+		update: { method: 'PUT' } 
+	});
+	return exerciseSet;
+});
+
 swimApp.factory("exerciseSetFactory", function($resource) {
 	var exerciseSet = $resource('/api/exerciseSets/:id/', { id: '@id' }, { 
 		query: {
