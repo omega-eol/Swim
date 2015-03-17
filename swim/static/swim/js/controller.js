@@ -1,73 +1,65 @@
 var controllers = {};
 
 var w = null;
+var debug = false;
 
 controllers.WorkoutCtrl = function ($scope, $route, $routeParams, workoutFactory) {
 	$scope.workout = workoutFactory.get({id:1});
-	//console.log($scope.workout);
+	console.log($scope.workout);
 	
-	// make w accessible in console
-	//w = $scope.workout;
+	// list of workout sets types
+	$scope.WorkoutSetTypes = WorkoutSetTypes;
 	
-    /* Workout Set Type */
-    $scope.WorkoutSetTypes = WorkoutSetTypes;
-    $scope.getWorkoutSetTypeOrder = function (workoutSet) {
-        for (var i = 0; i < $scope.WorkoutSetTypes.length; i++) {
-            if (WorkoutSetTypes[i] === workoutSet.type) return i;
-        };
-        console.log(workoutSet.type + " is not found in WorkoutSetTypes.");
-        return 0;
-    };
-
     /* Buttons */
-    $scope.RemoveWorkoutSet = function (index) {
-        $scope.workout.workoutSets.splice(index, 1);
-        console.log("Workout Set has been removed.");
+    $scope.RemoveWorkoutSet = function (set, index) {
+        set.splice(index, 1);
+    	if (debug ) console.log("Workout Set has been removed.");
     };
 
     /* New Workout Set */
     $scope.workoutSet_repetitions = 1;
-    $scope.workoutSet_type = "Warm Up";
+    $scope.workoutSet_type = $scope.WorkoutSetTypes[0];
     $scope.AddWorkoutSet = function () {
-        // find max order
-        var maxOrder = 0;
-        for (var i = 0; i < $scope.workout.workoutSets.length; i++) {
-            if ($scope.workout.workoutSets[i].type === $scope.workoutSet_type) {
-                if ($scope.workout.workoutSets[i].order > maxOrder) maxOrder = $scope.workout.workoutSets[i].order;
-            };
-        };        
+    	if (debug) {
+    		console.log("Selected type: " + $scope.workoutSet_type);
+    		console.log("Selected number of repetitions: " + $scope.workoutSet_repetitions);
+    	};
+    	
+    	if ($scope.workoutSet_type === 'Warm Up') {
+    		// find max order
+    		order = findMaxOrder($scope.workout.warmUpSets, $scope.workoutSet_type) + 1;
+    		// create a Workout Set
+    		$scope.workoutSet = new WorkoutSet(order, $scope.workoutSet_repetitions, $scope.workoutSet_type, $scope.workout);
+    		// push new Workout Set to right array
+    		$scope.workout.warmUpSets.push($scope.workoutSet);
+    	} else if ($scope.workoutSet_type === 'Pre Set') {
+    		// find max order
+    		order = findMaxOrder($scope.workout.preSetSets, $scope.workoutSet_type) + 1;
+    		// create a Workout Set
+    		$scope.workoutSet = new WorkoutSet(order, $scope.workoutSet_repetitions, $scope.workoutSet_type, $scope.workout);
+    		$scope.workout.preSetSets.push($scope.workoutSet);
+    	} else if ($scope.workoutSet_type === 'Main Set') {
+    		// find max order
+    		order = findMaxOrder($scope.workout.mainSets, $scope.workoutSet_type) + 1;
+    		// create a Workout Set
+    		$scope.workoutSet = new WorkoutSet(order, $scope.workoutSet_repetitions, $scope.workoutSet_type, $scope.workout);
+    		$scope.workout.mainSets.push($scope.workoutSet);
+    	} else if ($scope.workoutSet_type === 'Cool Down') {
+    		// find max order
+    		order = findMaxOrder($scope.workout.coolDownSets, $scope.workoutSet_type) + 1;
+    		// create a Workout Set
+    		$scope.workoutSet = new WorkoutSet(order, $scope.workoutSet_repetitions, $scope.workoutSet_type, $scope.workout);
+    		$scope.workout.coolDownSets.push($scope.workoutSet);
+    	};
+    	
+	};
 
-        $scope.workoutSet = new WorkoutSet(maxOrder+1, $scope.workoutSet_repetitions, $scope.workoutSet_type, $scope.workout);
-        $scope.workout.workoutSets.push($scope.workoutSet);
-    };
-
-    /* Change Workout Set Type -> Order */
-    $scope.WorkoutSetTypeOrderUpdate = function (workoutSet) {
-        // change the order of the current workoutSet
-        workoutSet.order = -1;
-
-        // find max order
-        var maxOrder = 0;
-        for (var i = 0; i < $scope.workout.workoutSets.length; i++) {
-            if ($scope.workout.workoutSets[i].type === workoutSet.type) {
-                if ($scope.workout.workoutSets[i].order > maxOrder) maxOrder = $scope.workout.workoutSets[i].order;
-            };
-        };
-        workoutSet.order = maxOrder + 1;
-    }
-
-    /* Sortable functionality */
+    /* Sortable functionality for Workout Sets */
+    var newWorkoutSetPosition = 0;
     $scope.workoutSetsSortableOptions = {
         placeholder: "ui-state-highlight",
         forcePlaceholderSize: true,
-        handle: "> div.fa-arrows-v",
-        start: function(e, ui) {
-            console.log("Old position: " + ui.item.index());
-        },
-        stop: function(e, ui) {
-            console.log("New position: " + ui.item.index());
-            //ui.item.sortable.cancel();
-        }
+        handle: "> div.fa-arrows-v"
     };
     
     /* Save Workout */

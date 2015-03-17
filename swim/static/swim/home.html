@@ -23,22 +23,26 @@
         </tr>
     </table>
 
-    
-    <span ng-repeat="workoutSetType in WorkoutSetTypes">
-    
-
-    <ul ui-sortable="workoutSetsSortableOptions" ng-model="workout.workoutSets" class="workoutSets">
-        <li ng-repeat="workoutSet in workout.workoutSets | filter:{type:workoutSetType}"
-            ng-class="{warm_up : workoutSet.type === 'Warm Up', main_set: workoutSet.type === 'Main Set',
-            pre_set : workoutSet.type === 'Pre Set', cool_down: workoutSet.type === 'Cool Down'}">
-            
-            <div class="fa fa-arrows-v" style="cursor:move"></div>
-            
+    <!-- Warm Up -->
+    <ul ui-sortable="workoutSetsSortableOptions" ng-model="workout.warmUpSets" class="workoutSets">
+        <li ng-repeat="workoutSet in workout.warmUpSets" class="warm_up">
+        
             <table class="workoutSet_table">
                 <tr>
+                	
+                	<!-- Sorting controls -->
+                    <div class="fa fa-arrows-v" style="cursor:move"></div>
+                
                     <td class="workoutSet_col1">
+                    	<!-- Workout Set properties -->
                         <input name="workoutSet_repetitions" class="repetitions" type="number" min="1" value="{{workoutSet.repetitions}}" 
                             ng-model="workoutSet.repetitions"/>
+                        order: <span class="workoutSet_order">{{workoutSet.order}}</span>
+                        <br />
+					    type:
+                        <select class="workoutSet_type" ng-options="type for type in WorkoutSetTypes" 
+                            ng-model="workoutSet.type" ng-change="WorkoutSetTypeOrderUpdate(workoutSet)">
+                        </select>
                     </td>
 
                     <td class="workoutSet_col2">
@@ -54,9 +58,7 @@
 
                             <ul ui-sortable="exerciseSetsSortableOptions" ng-model="workoutSet.exerciseSets" class="exerciseSets">
                                 <li ng-repeat="exerciseSet in workoutSet.exerciseSets">
-                                  
-                                    <!-- ><span class="fa fa-arrows-v exerciseSetMove_btn" style="cursor:move"></span> -->
-                                  
+    
                                     <table class="exerciseSet_table">
                                         <tr>
                                             <!-- # of repetitions -->
@@ -130,20 +132,12 @@
                         <!-- Exercise Set Controller End -->
                         </div>
 
-                        <button ng-click="RemoveWorkoutSet($index)">Remove Workout Set</button>
+						<!-- Remove current Workout Set -->
+                        <button ng-click="RemoveWorkoutSet(workout.warmUpSets, $index)">Remove Workout Set</button>
                     </td>
 
+					<!-- Exerxise Set stats -->
                     <td class="workoutSet_col3">
-                        order: <span class="workoutSet_order">{{workoutSet.order}}</span>
-                        
-                        <br />
-
-                        type:
-                        <select class="workoutSet_type" ng-options="type for type in WorkoutSetTypes" 
-                            ng-model="workoutSet.type" ng-change="WorkoutSetTypeOrderUpdate(workoutSet)">
-                        </select>
-                        <br />
-                        <!-- Exerxise Set stats -->
                         <span>{{workoutSet.printDistance()}} in {{workoutSet.printInterval()}}</span>
                     </td>
 
@@ -155,23 +149,391 @@
             
         </li>
     </ul>
+ 	<!-- end Warm Up -->
  
- </span>
+    <!-- Pre Set -->
+    <ul ui-sortable="workoutSetsSortableOptions" ng-model="workout.preSetSets" class="workoutSets">
+        <li ng-repeat="workoutSet in workout.preSetSets" class="pre_set">
+        	<table class="workoutSet_table">
+                <tr>
+                	
+                	<!-- Sorting controls -->
+                    <div class="fa fa-arrows-v" style="cursor:move"></div>
+                
+                    <td class="workoutSet_col1">
+                    	<!-- Workout Set properties -->
+                        <input name="workoutSet_repetitions" class="repetitions" type="number" min="1" value="{{workoutSet.repetitions}}" 
+                            ng-model="workoutSet.repetitions"/>
+                        order: <span class="workoutSet_order">{{workoutSet.order}}</span>
+                        <br />
+					    type:
+                        <select class="workoutSet_type" ng-options="type for type in WorkoutSetTypes" 
+                            ng-model="workoutSet.type" ng-change="WorkoutSetTypeOrderUpdate(workoutSet)">
+                        </select>
+                    </td>
+
+                    <td class="workoutSet_col2">
+                        <div ng-controller="ExerciseSetCtrl">
+
+                            <table class="exerciseSet_table" ng-show="workoutSet.exerciseSets.length">
+                                <tr>
+                                    <th class="exerciseSet_col1">#</th>
+                                    <th class="exerciseSet_col2">Exercises</th>
+                                    <th class="exerciseSet_col3">Summary</th>
+                                </tr>
+                            </table>
+
+                            <ul ui-sortable="exerciseSetsSortableOptions" ng-model="workoutSet.exerciseSets" class="exerciseSets">
+                                <li ng-repeat="exerciseSet in workoutSet.exerciseSets">
+    
+                                    <table class="exerciseSet_table">
+                                        <tr>
+                                            <!-- # of repetitions -->
+                                            <td class="exerciseSet_col1">
+                                              
+                                                <span class="fa fa-arrows-v exerciseSetMove_btn" style="cursor:move"></span>
+                                              
+                                                <input class="repetitions" type="number" min="1" value="{{exerciseSet.repetitions}}" 
+                                                    ng-model="exerciseSet.repetitions"/>
+                                            </td>
+
+                                            <!-- Exercise -->
+                                            <td class="exerciseSet_col2">
+                                                <div data-ng-switch="" on="editable[$index]" style="display:inline;">
+
+                                                    <!-- Normal View -->
+                                                    <div data-ng-switch-when="false" style="display:inline;">
+                                                        {{exerciseSet.exercise.print()}}
+                                                        <!-- Edit Button -->
+                                                        <span ng-click="EditExerciseSet($index)" class="fa fa-edit btn" title="Edit Exercise"></span>
+                                                    </div>
+
+                                                    <!-- Edit View -->
+                                                    <div data-ng-switch-when="true" style="display:inline;">
+                                                        <form style="display:inline;">
+                                                            <input class="exercise_distance" ng-model="exerciseSet.exercise.distance" type="number" min="10" value="{{exerciseSet.exercise.distance}}" />&nbsp;meters&nbsp;            
+                                                            <select class="exercise_stroke" ng-model="exerciseSet.exercise.stroke">
+                                                                <option ng-repeat="stroke in ExerciseStrokes" value="{{stroke}}">{{stroke}}</option>
+                                                            </select>
+                                                            <select class="exercise_type" ng-model="exerciseSet.exercise.type">
+                                                                <option ng-repeat="type in ExerciseTypes" value="{{type}}">{{type}}</option>
+                                                            </select>
+                                                            in
+                                                            <input class="exercise_interval" ng-model="exerciseSet.exercise.interval" type="number" min="5" value="exerciseSet.exercise.interval" /> seconds
+                        
+                                                            <!-- Buttons -->
+                                                            <span title="Save Exercise" class="btn fa fa-save" ng-click="SaveExerciseSet($index)"></span>
+                                                            <span title="Cancel" class="btn fa fa-history" ng-click="CancelEditExerciseSet($index)"></span>
+                                                        </form>
+                                                    </div>
+            
+                                                <!-- End If -->
+                                                </div>
+                                            </td>
+
+                                            <!-- Stats -->
+                                            <td class="exerciseSet_col3">
+                                                <span>{{exerciseSet.printDistance()}} in {{exerciseSet.printInterval()}}</span> | 
+                                                <span title="Remove Exercise" class="fa fa-remove btn" ng-click="RemoveExerciseSet($index)"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                </li>
+                            </ul>
+
+                            <!-- New Exercise Set -->
+                            <form>
+                                <input class="exercise_distance" ng-model="exercise.distance" type="number" min="10" value="{{exercise.distance}}" />&nbsp;meters&nbsp;            
+                                <select class="exercise_stroke" ng-model="exercise.stroke">
+                                    <option ng-repeat="stroke in ExerciseStrokes" value="{{stroke}}">{{stroke}}</option>
+                                </select>
+                                <select class="exercise_type" ng-model="exercise.type">
+                                    <option ng-repeat="type in ExerciseTypes" value="{{type}}">{{type}}</option>
+                                </select>
+                                in
+                                <input class="exercise_interval" ng-model="exercise.interval" type="number" min="5" value="{{exercise.interval}}" /> seconds
+                                <span class="btn fa fa-plus" title="Add Exercise" ng-click="AddExerciseSet(exercise)"></span>
+                            </form>
+
+                        <!-- Exercise Set Controller End -->
+                        </div>
+
+						<!-- Remove current Workout Set -->
+                        <button ng-click="RemoveWorkoutSet(workout.preSetSets, $index)">Remove Workout Set</button>
+                    </td>
+
+					<!-- Exerxise Set stats -->
+                    <td class="workoutSet_col3">
+                        <span>{{workoutSet.printDistance()}} in {{workoutSet.printInterval()}}</span>
+                    </td>
+                    
+	            </tr>
+	        </table>
+        </li>
+    </ul>
+ 	<!-- end Pre Set -->
  
-<hr />
+	<!-- Main Set -->
+	<ul ui-sortable="workoutSetsSortableOptions" ng-model="workout.mainSets" class="workoutSets">
+        <li ng-repeat="workoutSet in workout.mainSets" class="main_set">
+        	<table class="workoutSet_table">
+                <tr>
+                	
+                	<!-- Sorting controls -->
+                    <div class="fa fa-arrows-v" style="cursor:move"></div>
+                
+                    <td class="workoutSet_col1">
+                    	<!-- Workout Set properties -->
+                        <input name="workoutSet_repetitions" class="repetitions" type="number" min="1" value="{{workoutSet.repetitions}}" 
+                            ng-model="workoutSet.repetitions"/>
+                        order: <span class="workoutSet_order">{{workoutSet.order}}</span>
+                        <br />
+					    type:
+                        <select class="workoutSet_type" ng-options="type for type in WorkoutSetTypes" 
+                            ng-model="workoutSet.type" ng-change="WorkoutSetTypeOrderUpdate(workoutSet)">
+                        </select>
+                    </td>
 
-<!-- New Workout Set -->
-      <form>
-          <input class="repetitions" type="number" min="1" value="{{workoutSet_repetitions}}" ng-model="workoutSet_repetitions"/>
-          <select class="workoutSet_type" ng-model="workoutSet_type">
-              <option ng-repeat="type in WorkoutSetTypes" value="{{type}}">{{type}}</option>
-          </select>
-          <button ng-click="AddWorkoutSet()">Add Workout Set</button>
-      </form>
-      
-      <br/><br/>
-<button ng-click="saveWorkout()" class="btn" title="Save Workout">Save Workout</button>
+                    <td class="workoutSet_col2">
+                        <div ng-controller="ExerciseSetCtrl">
 
-      <!-- End Workout Controller -->       
+                            <table class="exerciseSet_table" ng-show="workoutSet.exerciseSets.length">
+                                <tr>
+                                    <th class="exerciseSet_col1">#</th>
+                                    <th class="exerciseSet_col2">Exercises</th>
+                                    <th class="exerciseSet_col3">Summary</th>
+                                </tr>
+                            </table>
+
+                            <ul ui-sortable="exerciseSetsSortableOptions" ng-model="workoutSet.exerciseSets" class="exerciseSets">
+                                <li ng-repeat="exerciseSet in workoutSet.exerciseSets">
+    
+                                    <table class="exerciseSet_table">
+                                        <tr>
+                                            <!-- # of repetitions -->
+                                            <td class="exerciseSet_col1">
+                                              
+                                                <span class="fa fa-arrows-v exerciseSetMove_btn" style="cursor:move"></span>
+                                              
+                                                <input class="repetitions" type="number" min="1" value="{{exerciseSet.repetitions}}" 
+                                                    ng-model="exerciseSet.repetitions"/>
+                                            </td>
+
+                                            <!-- Exercise -->
+                                            <td class="exerciseSet_col2">
+                                                <div data-ng-switch="" on="editable[$index]" style="display:inline;">
+
+                                                    <!-- Normal View -->
+                                                    <div data-ng-switch-when="false" style="display:inline;">
+                                                        {{exerciseSet.exercise.print()}}
+                                                        <!-- Edit Button -->
+                                                        <span ng-click="EditExerciseSet($index)" class="fa fa-edit btn" title="Edit Exercise"></span>
+                                                    </div>
+
+                                                    <!-- Edit View -->
+                                                    <div data-ng-switch-when="true" style="display:inline;">
+                                                        <form style="display:inline;">
+                                                            <input class="exercise_distance" ng-model="exerciseSet.exercise.distance" type="number" min="10" value="{{exerciseSet.exercise.distance}}" />&nbsp;meters&nbsp;            
+                                                            <select class="exercise_stroke" ng-model="exerciseSet.exercise.stroke">
+                                                                <option ng-repeat="stroke in ExerciseStrokes" value="{{stroke}}">{{stroke}}</option>
+                                                            </select>
+                                                            <select class="exercise_type" ng-model="exerciseSet.exercise.type">
+                                                                <option ng-repeat="type in ExerciseTypes" value="{{type}}">{{type}}</option>
+                                                            </select>
+                                                            in
+                                                            <input class="exercise_interval" ng-model="exerciseSet.exercise.interval" type="number" min="5" value="exerciseSet.exercise.interval" /> seconds
+                        
+                                                            <!-- Buttons -->
+                                                            <span title="Save Exercise" class="btn fa fa-save" ng-click="SaveExerciseSet($index)"></span>
+                                                            <span title="Cancel" class="btn fa fa-history" ng-click="CancelEditExerciseSet($index)"></span>
+                                                        </form>
+                                                    </div>
+            
+                                                <!-- End If -->
+                                                </div>
+                                            </td>
+
+                                            <!-- Stats -->
+                                            <td class="exerciseSet_col3">
+                                                <span>{{exerciseSet.printDistance()}} in {{exerciseSet.printInterval()}}</span> | 
+                                                <span title="Remove Exercise" class="fa fa-remove btn" ng-click="RemoveExerciseSet($index)"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                </li>
+                            </ul>
+
+                            <!-- New Exercise Set -->
+                            <form>
+                                <input class="exercise_distance" ng-model="exercise.distance" type="number" min="10" value="{{exercise.distance}}" />&nbsp;meters&nbsp;            
+                                <select class="exercise_stroke" ng-model="exercise.stroke">
+                                    <option ng-repeat="stroke in ExerciseStrokes" value="{{stroke}}">{{stroke}}</option>
+                                </select>
+                                <select class="exercise_type" ng-model="exercise.type">
+                                    <option ng-repeat="type in ExerciseTypes" value="{{type}}">{{type}}</option>
+                                </select>
+                                in
+                                <input class="exercise_interval" ng-model="exercise.interval" type="number" min="5" value="{{exercise.interval}}" /> seconds
+                                <span class="btn fa fa-plus" title="Add Exercise" ng-click="AddExerciseSet(exercise)"></span>
+                            </form>
+
+                        <!-- Exercise Set Controller End -->
+                        </div>
+                        
+						<!-- Remove current Workout Set -->
+                        <button ng-click="RemoveWorkoutSet(workout.mainSets, $index)">Remove Workout Set</button>
+                    </td>
+
+					<!-- Exerxise Set stats -->
+                    <td class="workoutSet_col3">
+                        <span>{{workoutSet.printDistance()}} in {{workoutSet.printInterval()}}</span>
+                    </td>
+                    
+	            </tr>
+	        </table>
+        </li>
+    </ul>
+ 	<!-- end Main Set -->
+
+	<!-- Cool Down -->
+	<ul ui-sortable="workoutSetsSortableOptions" ng-model="workout.coolDownSets" class="workoutSets">
+        <li ng-repeat="workoutSet in workout.coolDownSets" class="cool_down">
+        	<table class="workoutSet_table">
+                <tr>
+                	
+                	<!-- Sorting controls -->
+                    <div class="fa fa-arrows-v" style="cursor:move"></div>
+                
+                    <td class="workoutSet_col1">
+                    	<!-- Workout Set properties -->
+                        <input name="workoutSet_repetitions" class="repetitions" type="number" min="1" value="{{workoutSet.repetitions}}" 
+                            ng-model="workoutSet.repetitions"/>
+                        order: <span class="workoutSet_order">{{workoutSet.order}}</span>
+                        <br />
+					    type:
+                        <select class="workoutSet_type" ng-options="type for type in WorkoutSetTypes" 
+                            ng-model="workoutSet.type" ng-change="WorkoutSetTypeOrderUpdate(workoutSet)">
+                        </select>
+                    </td>
+
+                    <td class="workoutSet_col2">
+                        <div ng-controller="ExerciseSetCtrl">
+
+                            <table class="exerciseSet_table" ng-show="workoutSet.exerciseSets.length">
+                                <tr>
+                                    <th class="exerciseSet_col1">#</th>
+                                    <th class="exerciseSet_col2">Exercises</th>
+                                    <th class="exerciseSet_col3">Summary</th>
+                                </tr>
+                            </table>
+
+                            <ul ui-sortable="exerciseSetsSortableOptions" ng-model="workoutSet.exerciseSets" class="exerciseSets">
+                                <li ng-repeat="exerciseSet in workoutSet.exerciseSets">
+    
+                                    <table class="exerciseSet_table">
+                                        <tr>
+                                            <!-- # of repetitions -->
+                                            <td class="exerciseSet_col1">
+                                              
+                                                <span class="fa fa-arrows-v exerciseSetMove_btn" style="cursor:move"></span>
+                                              
+                                                <input class="repetitions" type="number" min="1" value="{{exerciseSet.repetitions}}" 
+                                                    ng-model="exerciseSet.repetitions"/>
+                                            </td>
+
+                                            <!-- Exercise -->
+                                            <td class="exerciseSet_col2">
+                                                <div data-ng-switch="" on="editable[$index]" style="display:inline;">
+
+                                                    <!-- Normal View -->
+                                                    <div data-ng-switch-when="false" style="display:inline;">
+                                                        {{exerciseSet.exercise.print()}}
+                                                        <!-- Edit Button -->
+                                                        <span ng-click="EditExerciseSet($index)" class="fa fa-edit btn" title="Edit Exercise"></span>
+                                                    </div>
+
+                                                    <!-- Edit View -->
+                                                    <div data-ng-switch-when="true" style="display:inline;">
+                                                        <form style="display:inline;">
+                                                            <input class="exercise_distance" ng-model="exerciseSet.exercise.distance" type="number" min="10" value="{{exerciseSet.exercise.distance}}" />&nbsp;meters&nbsp;            
+                                                            <select class="exercise_stroke" ng-model="exerciseSet.exercise.stroke">
+                                                                <option ng-repeat="stroke in ExerciseStrokes" value="{{stroke}}">{{stroke}}</option>
+                                                            </select>
+                                                            <select class="exercise_type" ng-model="exerciseSet.exercise.type">
+                                                                <option ng-repeat="type in ExerciseTypes" value="{{type}}">{{type}}</option>
+                                                            </select>
+                                                            in
+                                                            <input class="exercise_interval" ng-model="exerciseSet.exercise.interval" type="number" min="5" value="exerciseSet.exercise.interval" /> seconds
+                        
+                                                            <!-- Buttons -->
+                                                            <span title="Save Exercise" class="btn fa fa-save" ng-click="SaveExerciseSet($index)"></span>
+                                                            <span title="Cancel" class="btn fa fa-history" ng-click="CancelEditExerciseSet($index)"></span>
+                                                        </form>
+                                                    </div>
+            
+                                                <!-- End If -->
+                                                </div>
+                                            </td>
+
+                                            <!-- Stats -->
+                                            <td class="exerciseSet_col3">
+                                                <span>{{exerciseSet.printDistance()}} in {{exerciseSet.printInterval()}}</span> | 
+                                                <span title="Remove Exercise" class="fa fa-remove btn" ng-click="RemoveExerciseSet($index)"></span>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                </li>
+                            </ul>
+
+                            <!-- New Exercise Set -->
+                            <form>
+                                <input class="exercise_distance" ng-model="exercise.distance" type="number" min="10" value="{{exercise.distance}}" />&nbsp;meters&nbsp;            
+                                <select class="exercise_stroke" ng-model="exercise.stroke">
+                                    <option ng-repeat="stroke in ExerciseStrokes" value="{{stroke}}">{{stroke}}</option>
+                                </select>
+                                <select class="exercise_type" ng-model="exercise.type">
+                                    <option ng-repeat="type in ExerciseTypes" value="{{type}}">{{type}}</option>
+                                </select>
+                                in
+                                <input class="exercise_interval" ng-model="exercise.interval" type="number" min="5" value="{{exercise.interval}}" /> seconds
+                                <span class="btn fa fa-plus" title="Add Exercise" ng-click="AddExerciseSet(exercise)"></span>
+                            </form>
+
+                        <!-- Exercise Set Controller End -->
+                        </div>
+
+						<!-- Remove current Workout Set -->
+                        <button ng-click="RemoveWorkoutSet(workout.coolDownSets, $index)">Remove Workout Set</button>
+                    </td>
+
+					<!-- Exerxise Set stats -->
+                    <td class="workoutSet_col3">
+                        <span>{{workoutSet.printDistance()}} in {{workoutSet.printInterval()}}</span>
+                    </td>
+                    
+	            </tr>
+	        </table>
+        </li>
+    </ul>
+ 	<!-- end Cool Down -->
+
+	<hr />
+
+	<!-- New Workout Set -->
+	<form>
+	    <input class="repetitions" type="number" min="1" value="{{workoutSet_repetitions}}" ng-model="workoutSet_repetitions"/>
+	    <select class="workoutSet_type" ng-model="workoutSet_type">
+	        <option ng-repeat="type in WorkoutSetTypes" value="{{type}}">{{type}}</option>
+	    </select>
+	    <button ng-click="AddWorkoutSet()">Add Workout Set</button>
+	</form>
+	
+	<br/>
+	<button ng-click="saveWorkout()" class="btn" title="Save Workout">Save Workout</button>
+
+     <!-- End Workout Controller -->       
 </div>
         

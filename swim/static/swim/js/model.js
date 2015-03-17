@@ -83,7 +83,7 @@ var Exercise = function (distance, stroke, type, interval) {
     	return this.distance + " meters " + this.stroke + " " + this.type + " in " + this.interval + " seconds.";
     };
     
-    console.log("A new Exercise has been created");
+    if (debug) console.log("A new Exercise has been created");
 };
 
 var ExerciseSet = function (order, repetitions, exercise, workoutSet) {
@@ -133,7 +133,7 @@ var ExerciseSet = function (order, repetitions, exercise, workoutSet) {
         return this.repetitions * this.exercise.interval;
     };
 
-    console.log("A new ExerciseSet has been created");
+    if (debug) console.log("A new ExerciseSet has been created");
 };
 
 var WorkoutSet = function (order, repetitions, type, workout) {
@@ -208,19 +208,25 @@ var WorkoutSet = function (order, repetitions, type, workout) {
         return printTime(this.interval());
     };
 
-    console.log("A new WorkoutSet has been created");
+    if (debug) console.log("A new WorkoutSet has been created");
 };
 
 var Workout = function () {
     this.id = 0;
     this.name = "";
     this.created_at = new Date();
+    this.updated_at = null;
     this.author = ""; 
     this.type = "";
     this.description = "";
 
     this.user = null;
-    this.workoutSets = [];
+    //this.workoutSets = [];
+    
+    this.warmUpSets = [];
+    this.preSetSets = [];
+    this.mainSets = [];
+    this.coolDownSets = [];
 
     /* Functions */
     this.parse = function(s) {
@@ -228,6 +234,7 @@ var Workout = function () {
     	this.id = s.id;
     	this.name = s.name;
     	this.created_at = s.created_at;
+    	this.updated_at = s.updated_at;
         this.author = s.author; 
         this.type = s.type;
         this.description = s.description;
@@ -242,7 +249,16 @@ var Workout = function () {
         	var workoutSet = new WorkoutSet();
         	workoutSet.parse(ws);
         	workoutSet.workout = that;
-        	that.workoutSets.push(workoutSet);
+        	if (workoutSet.type === 'Warm Up') {
+        		that.warmUpSets.push(workoutSet);
+        	} else if (workoutSet.type === 'Pre Set') {
+        		that.preSetSets.push(workoutSet);
+        	} else if (workoutSet.type === 'Main Set') {
+        		that.mainSets.push(workoutSet);
+        	} else if (workoutSet.type === 'Cool Down') {
+        		that.coolDownSets.push(workoutSet);
+        	};
+        	//that.workoutSets.push(workoutSet);
         });
     };
     
@@ -254,6 +270,7 @@ var Workout = function () {
     		description: this.description,
     		type: this.type,
     		created_at: this.created_at,
+    		updated_at: this.updated_at,
     		user: this.user.toJSON(),
     		workoutSets: this.workoutSetsToJSON()
     	};
@@ -262,7 +279,8 @@ var Workout = function () {
     /* Serialize set of Workout Sets to JSON */
     this.workoutSetsToJSON = function() {
     	var res = [];
-		angular.forEach(this.workoutSets, function(workoutSet, index) {
+    	var workoutSets = this.warmUpSets.concat(this.preSetSets, this.mainSets, this.coolDownSets);
+		angular.forEach(workoutSets, function(workoutSet, index) {
 			res.push(workoutSet.toJSON());
 		});
 		return res;
@@ -271,7 +289,8 @@ var Workout = function () {
     /* Distance */
     this.distance = function () {
         var d = 0;
-        this.workoutSets.forEach(function (workoutSet) {
+        var temp = this.warmUpSets.concat(this.preSetSets, this.mainSets, this.coolDownSets);
+        temp.forEach(function (workoutSet) {
             d += workoutSet.distance();
         });
         return d;
@@ -284,7 +303,8 @@ var Workout = function () {
     /* Interval */
     this.interval = function () {
         var ii = 0;
-        this.workoutSets.forEach(function (workoutSet) {
+        var temp = this.warmUpSets.concat(this.preSetSets, this.mainSets, this.coolDownSets);
+        temp.forEach(function (workoutSet) {
             ii += workoutSet.interval();
         });
         return ii;
@@ -308,7 +328,7 @@ var Workout = function () {
     };
 
     /* Log */
-    console.log("A new Workout has been created");
+    if (debug) console.log("A new Workout has been created");
 };
 
 /* Utils */
@@ -348,6 +368,7 @@ var printTime = function (totalSeconds) {
     return res;
 };
 
+// print distance in K or meters
 var printDistance = function (totalDistance) {
     var km = totalDistance / 1000;
     var res = "";
@@ -357,4 +378,15 @@ var printDistance = function (totalDistance) {
         res = totalDistance + " meters";
     };
     return res;
+};
+
+// finds current max order for a particular Workout Set type
+var findMaxOrder = function(workoutSets, type) {
+	var maxOrder = 0;
+	for (var i = 0; i < workoutSets.length; i++) {
+	    if (workoutSets[i].type === type) {
+	        if (workoutSets[i].order > maxOrder) maxOrder = workoutSets[i].order;
+	    };
+	};
+	return maxOrder;
 };

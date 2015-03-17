@@ -12,11 +12,17 @@ class Workout(models.Model):
     # date and time when the current Workout was created 
     created_at = models.DateTimeField(default=datetime.now)
     
+    # date and time when the current Workout was updated
+    updated_at = models.DateTimeField(default=datetime.now)
+    
     # author
     user = models.ForeignKey(User)
     
     # type: User defined, SwimWeb define..
     type = models.CharField(max_length=42)
+    
+    class Meta:
+        ordering = ['-created_at']
     
     def __str__(self):
         return "%s by %s %s" % (self.name, self.user.first_name, self.user.last_name)
@@ -37,6 +43,9 @@ class WorkoutSet(models.Model):
     
     # Workout
     workout = models.ForeignKey(Workout, related_name='workoutSets')
+    
+    class Meta:
+        ordering = ['type', 'order']
     
     def __str__(self):
         return "%d x %s (%s)" % (self.repetitions, self.type, self.workout)

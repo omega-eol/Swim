@@ -53,7 +53,7 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
     # Other fileds
     class Meta:
         model = Workout
-        fields = ('id', 'name', 'description', 'type', 'created_at', 'user', 'workoutSets')
+        fields = ('id', 'name', 'description', 'type', 'created_at', 'updated_at', 'user', 'workoutSets')
         read_only_fields = ('created_at',)
        
     def create(self, validated_data):
@@ -62,7 +62,9 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
         
     def update(self, instance, validated_data):
         #print(validated_data)
-        backup = validated_data.copy()
+        
+        #TODO implement backup functionality in case of server fails
+        #backup = validated_data.copy()
         
         # get Workout fields
         instance.name = validated_data.get('name', instance.name)
@@ -73,11 +75,13 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
         #print('All previous Workout Set has been removed')
         
         workoutSetsDictionary = validated_data.pop('workoutSets')
+        workoutSet_order = 0;
         for workoutSetDictionary in workoutSetsDictionary:
             #print(workoutSetDictionary)
             
             # create new Workout Set
-            workoutSet = WorkoutSet(order = workoutSetDictionary['order'], 
+            workoutSet_order = workoutSet_order + 1
+            workoutSet = WorkoutSet(order = workoutSet_order, 
                                     repetitions = workoutSetDictionary['repetitions'],
                                     type = workoutSetDictionary['type'],
                                     workout = instance)
