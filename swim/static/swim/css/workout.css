@@ -9,16 +9,16 @@ input.repetitions {
 
 /* Workout Sets */
 .warm_up {
-    background-color: aqua;
+    background-color: #FFFFB2;
 }
 .pre_set {
-    background-color: yellow;
+    background-color: #D6FFD6;
 }
 .main_set {
-    background-color: green;
+    background-color: #FFCCCC;
 }
 .cool_down {
-    background-color: blue;
+    background-color: #CCEBFF;
 }
 
 table.workoutSet_table {
@@ -46,11 +46,26 @@ ul.workoutSets {
     padding: 0px;
 }
 ul.workoutSets li {
-    border: 1px dashed;
+	/*
+    border: 1px dashed #0000FF;
+    */
     margin-bottom: 2px;
+    
 }
-ul.workoutSets table th{
+ul.workoutSets table th {
     text-align: center;
+}
+
+/* Sorting of Workout Set */ 
+div.workoutSetSortingControl {
+	cursor: move;
+	
+	position: absolute;
+	width: 20px;
+	align: center;
+	
+	border: 1px solid;
+	margin-bottom: 2px;
 }
 
 /* Exercise Sets */
@@ -58,24 +73,24 @@ table.exerciseSet_table {
     width: 100%;
     margin: 0px;
     padding: 0px;
-    
+    /*
     border: 1px solid;
     margin-bottom: 1px;
-    
+    */
 }
 table.exerciseSet_table th {
-    border: 1px solid;
+    /*border: 1px solid;*/
 }
 .exerciseSet_col1 {
     width: 10%;
-    text-align: center;
+    text-align: right;
 }
 .exerciseSet_col2 {
     width: 60%;
 }
 .exerciseSet_col3 {
     width: 30%;
-    text-align: center;
+    text-align: left;
 }
 ul.exerciseSets {
     list-style: none;
@@ -84,15 +99,46 @@ ul.exerciseSets {
 ul.exerciseSets li {
     padding: 0px;
     margin: 0px;
+    position: relative;
+    
+    border: 1px dashed #990099;
+    margin-bottom: 1px;
 }
 
 /* Sort Exercise Set Button */
-span.exerciseSetMove_btn {
-  display: inline;
+span.exerciseSetSortingControl {
+  cursor: move;
+  position: absolute;
+  top: 4px;
+  left: 3px;
+  width: 15px;
+  text-align: center;
+  /*
   border: 1px solid;
   margin-bottom: 2px;
+  */
 }
 
+/* Delete Exercise Set Button */
+span.exerciseSetRemoveBtn {
+	cursor: move;
+	width: 15px;
+	float: right;
+	/*
+	border: 1px solid;
+  	margin-bottom: 2px;
+    */
+}
+
+div.newExerciseSetContainer {
+	margin: 0px;
+	margin-top: 2px;
+	padding: 0px;
+	/*
+	border: 1px solid;
+  	margin-bottom: 1px;
+  	*/
+}
 
 /* Exercise */
 input.exercise_distance {

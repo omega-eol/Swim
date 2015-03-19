@@ -16,6 +16,13 @@ controllers.WorkoutCtrl = function ($scope, $route, $routeParams, workoutFactory
     	if (debug ) console.log("Workout Set has been removed.");
     };
 
+    /* On Workout Set type update */
+    $scope.WorkoutSetTypeUpdate = function(workoutSet, type) {
+    	if (debug) {
+    		console.log("Workout Set type: ", type);
+    	}
+    };
+    
     /* New Workout Set */
     $scope.workoutSet_repetitions = 1;
     $scope.workoutSet_type = $scope.WorkoutSetTypes[0];
