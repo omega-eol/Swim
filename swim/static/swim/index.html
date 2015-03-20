@@ -1,6 +1,49 @@
 <div>
 	<ul>
-		<li><a href="/#/workouts">Workouts</a></li>
 		<li><a href="/#/exercises">Exercises</a></li>
 	</ul>
+</div>
+
+<span class="indexMsg">Choose a Workout or <span class="createNewWorkoutBtn">create new</span></span>
+
+<div ng-controller="WorkoutListCtrl">
+	<ul class="workoutList">
+    	<li ng-repeat="workout in workouts" class="workoutListItem">
+    		<a href="/#/workout/{{workout.id}}" title="View/Edit">
+    			<span class="indexWorkoutName">{{workout.name}}</span>
+    		</a>
+    		
+    		<span class="indexAdditionalInfo">by {{workout.user.full_name()}} 
+    		created at {{workout.created_at | date : short }}, last updated at {{workout.updated_at  | date : short }}</span>
+    		
+    		<div class="indexWorkoutDescription">
+    			{{workout.description}}
+    		</div>
+    
+    		<hr/>
+    	
+    		Summary:
+    		<ul class="indexWorkoutSummary">
+    			<li>Distance: {{workout.printDistance()}}</li>
+        		<li>Time: {{workout.printInterval()}}</li>
+        		<li>Average Speed: {{workout.printSpeed()}}</li>
+        	</ul>
+    		
+    		<!-- Visualization -->			
+			<div ng-controller="WorkoutListCharCtrl">
+				<ul class="chartContainer">
+					<li>
+						<div class="chartTitle">Total Distance: {{workout.printDistance()}}</div>
+						<angularchart dataset="distanceDist.dataset" schema="distanceDist.schema" options="distanceDist.options"></angularchart>
+					</li>
+					<li>
+					    <div class="chartTitle">Stroke Distribution</div>
+						<angularchart dataset="strokeDist.dataset" schema="strokeDist.schema" options="strokeDist.options"></angularchart>
+					</li>
+				</ul>
+			</div>
+			
+			 
+    	</li>
+    </ul>
 </div>

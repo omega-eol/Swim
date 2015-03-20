@@ -1,10 +1,26 @@
 var controllers = {};
+var debug = true;
 
-var w = null;
-var debug = false;
+/* INDEX.HTML */
+controllers.WorkoutListCtrl = function ($scope, $route, workoutFactory) {
+	$scope.workouts = workoutFactory.query(function() {
+		if (debug) console.log($scope.workouts);
+	});
+};
 
+/* Chart controll */
+controllers.WorkoutListCharCtrl = function ($scope, visualization) {
+	$scope.workout = $scope.$parent.workout;
+	console.log(visualization);
+	
+	// get data
+	$scope.distanceDist = visualization.DistanceDistByStroke($scope.workout);
+	$scope.strokeDist = visualization.StrokeDistribution($scope.$parent.workout);
+};
+
+/* Workout View/Edit page */
 controllers.WorkoutCtrl = function ($scope, $route, $routeParams, workoutFactory) {
-	$scope.workout = workoutFactory.get({id:1});
+	$scope.workout = workoutFactory.get({id: $routeParams.id});
 	console.log($scope.workout);
 	
 	// list of workout sets types

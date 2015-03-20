@@ -1,0 +1,29 @@
+
+/* Workout List */
+ul.workoutList {
+	list-style: none;
+	padding: 0px;
+}
+
+li.workoutListItem {
+	border: 1px dashed;
+	margin-bottom: 5px;
+	padding: 5px;
+}
+
+/* Charts */
+ul.chartContainer {
+	list-style: none outside none;
+	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+ul.chartContainer li {
+	display: block;
+	float: left;
+}
+
+div.chartTitle {
+	text-align: center;
+}

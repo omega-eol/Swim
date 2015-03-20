@@ -1,5 +1,5 @@
 	/* Swim App Models */
-var ExerciseStrokes = ["Free", "Breast", "IM", "Fly"];
+var ExerciseStrokes = ["Free", "Breast", "Back", "IM", "Fly"];
 var ExerciseTypes = ["Swim", "Drill", "Kick"];
 var WorkoutSetTypes = ["Warm Up", "Pre Set", "Main Set", "Cool Down"];
 
@@ -208,6 +208,29 @@ var WorkoutSet = function (order, repetitions, type, workout) {
         return printTime(this.interval());
     };
 
+    /* Find Stroke Distribution for the current Workout Set */
+    this.strokeDist = function() {
+    	// Free, Breast, IM, Fly
+    	// Initialize stroke counts array
+    	var stroke_counts = [];
+    	for (var i = 0; i < ExerciseStrokes.length; i++) stroke_counts.push(0);
+    	
+    	// for every Exercise Set in the Workout Set
+    	this.exerciseSets.forEach(function (exerciseSet) {
+    		// for every stroke type
+        	for (var i = 0; i < ExerciseStrokes.length; i++) {
+        		if (exerciseSet.exercise.stroke === ExerciseStrokes[i]) {
+        			stroke_counts[i] += exerciseSet.repetitions;
+        		};
+        	};
+        });
+        
+    	// multiply all coefficients by number of repetitions of the Workout Set
+    	for (var i = 0; i < ExerciseStrokes.length; i++) stroke_counts[i] = stroke_counts[i]*parseInt(this.repetitions);
+    	
+    	return stroke_counts;
+    };
+    
     if (debug) console.log("A new WorkoutSet has been created");
 };
 
@@ -327,6 +350,55 @@ var Workout = function () {
         return Math.round(this.speed()*100)/100 + " m/s";
     };
 
+    /* Get Distance Distribution by Stroke for a Workout */
+    this.distanceByStrokeDistribution = function() {
+    	// warm up
+    	var warm_up_distance = 0;
+    	this.warmUpSets.forEach(function(workoutSet) {
+    		warm_up_distance += workoutSet.distance();
+    	});
+    	
+    	// pre set
+    	var pre_set_distance = 0;
+    	this.preSetSets.forEach(function(workoutSet) {
+    		pre_set_distance += workoutSet.distance();
+    	});
+    	
+    	// main set
+    	var main_set_distance = 0;
+    	this.mainSets.forEach(function(workoutSet) {
+    		main_set_distance += workoutSet.distance();
+    	});
+    	
+    	// cool down
+    	var cool_down_set_distance = 0;
+    	this.coolDownSets.forEach(function(workoutSet) {
+    		cool_down_set_distance += workoutSet.distance();
+    	});
+    	
+    	return [warm_up_distance, pre_set_distance, main_set_distance, cool_down_set_distance];
+    };
+    
+    /* Get stroke distriution for the current Workout Set */
+    this.strokeDistribution = function() {
+    	// Free, Breast, IM, Fly
+    	var stroke_counts = [];
+    	for (var i = 0; i < ExerciseStrokes.length; i++) {
+    		stroke_counts.push(0);
+    	};
+    	
+    	// Combine all workout set in one array 
+    	var temp = this.warmUpSets.concat(this.preSetSets, this.mainSets, this.coolDownSets);
+        temp.forEach(function (workoutSet) {
+        	var temp = workoutSet.strokeDist();
+        	for (var i = 0; i < ExerciseStrokes.length; i++) {
+        		stroke_counts[i] += temp[i];
+        	};
+        });
+        
+        return stroke_counts;
+    };
+    
     /* Log */
     if (debug) console.log("A new Workout has been created");
 };
