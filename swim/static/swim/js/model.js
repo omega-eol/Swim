@@ -309,6 +309,22 @@ var Workout = function () {
 		return res;
     };
     
+    /* Return a Workout Set array based on type */
+    this.getWorkoutSetByType = function(type) {
+    	if (type === 'Warm Up') {
+    		return this.warmUpSets;
+    	} else if (type === 'Pre Set') {
+    		return this.preSetSets;
+    	} else if (type === 'Main Set') {
+    		return this.mainSets;
+    	} else if (type === 'Cool Down') {
+    		return this.coolDownSets;
+    	} else {
+    		console.log('Cannot find requested workout set array');
+    		return null;
+    	}
+    };
+    
     /* Distance */
     this.distance = function () {
         var d = 0;
@@ -350,8 +366,8 @@ var Workout = function () {
         return Math.round(this.speed()*100)/100 + " m/s";
     };
 
-    /* Get Distance Distribution by Stroke for a Workout */
-    this.distanceByStrokeDistribution = function() {
+    /* Get distance distribution by Workout Set type for the Workout */
+    this.distanceByWSTypeDistribution = function() {
     	// warm up
     	var warm_up_distance = 0;
     	this.warmUpSets.forEach(function(workoutSet) {
@@ -379,7 +395,36 @@ var Workout = function () {
     	return [warm_up_distance, pre_set_distance, main_set_distance, cool_down_set_distance];
     };
     
-    /* Get stroke distriution for the current Workout Set */
+    /* Get interval distribution by Workout Set type for the Workout */
+    this.intervalByWSTypeDistribution = function() {
+    	// warm up
+    	var warm_up_interval = 0;
+    	this.warmUpSets.forEach(function(workoutSet) {
+    		warm_up_interval += workoutSet.interval();
+    	});
+    	
+    	// pre set
+    	var pre_set_interval = 0;
+    	this.preSetSets.forEach(function(workoutSet) {
+    		pre_set_interval += workoutSet.interval();
+    	});
+    	
+    	// main set
+    	var main_set_interval = 0;
+    	this.mainSets.forEach(function(workoutSet) {
+    		main_set_interval += workoutSet.interval();
+    	});
+    	
+    	// cool down
+    	var cool_down_set_interval = 0;
+    	this.coolDownSets.forEach(function(workoutSet) {
+    		cool_down_set_interval += workoutSet.interval();
+    	});
+    	
+    	return [warm_up_interval, pre_set_interval, main_set_interval, cool_down_set_interval];
+    };
+    
+    /* Get stroke distribution for the current Workout Set */
     this.strokeDistribution = function() {
     	// Free, Breast, IM, Fly
     	var stroke_counts = [];
@@ -462,3 +507,23 @@ var findMaxOrder = function(workoutSets, type) {
 	};
 	return maxOrder;
 };
+
+var getClassNameByWorkoutSetType = function(type) {
+	var res = 'warm_up';
+	if (type === 'Pre Set') {
+		res = 'pre_set';
+	} else if (type === 'Main Set') {
+		res = 'main_set';
+	} else if (type === 'Cool Down') {
+		res = 'cool_down';
+	};
+	return res;
+};
+
+var getWorkoutSetArrayNameByType = function() {
+	var res = 'workout.warmUpSets';
+	return res;
+};
+
+
+

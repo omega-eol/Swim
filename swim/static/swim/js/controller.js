@@ -14,7 +14,8 @@ controllers.WorkoutListCharCtrl = function ($scope, visualization) {
 	console.log(visualization);
 	
 	// get data
-	$scope.distanceDist = visualization.DistanceDistByStroke($scope.workout);
+	$scope.intervalDist = visualization.IntervalDistByWorkourSetType($scope.workout);
+	$scope.distanceDist = visualization.DistanceDistByWorkourSetType($scope.workout);
 	$scope.strokeDist = visualization.StrokeDistribution($scope.$parent.workout);
 };
 
@@ -32,11 +33,21 @@ controllers.WorkoutCtrl = function ($scope, $route, $routeParams, workoutFactory
     	if (debug ) console.log("Workout Set has been removed.");
     };
 
-    /* On Workout Set type update */
-    $scope.WorkoutSetTypeUpdate = function(workoutSet, type) {
+    /* Fires when user change a workout set type */
+    $scope.WorkoutSetTypeUpdate = function(workoutSet, originalType, index) {
     	if (debug) {
-    		console.log("Workout Set type: ", type);
-    	}
+    		console.log("Workout Set: ", workoutSet);
+    		console.log("Workout Set type: ", originalType);
+    		console.log("Index:" , index);
+    	};
+    	
+    	// remove the current Workout Set from the current array
+    	var old_array = $scope.workout.getWorkoutSetByType(originalType);
+    	$scope.RemoveWorkoutSet(old_array, index);
+    	
+    	// add the current Workout Set to the new array
+    	var new_array = $scope.workout.getWorkoutSetByType(workoutSet.type);
+    	new_array.push(workoutSet);
     };
     
     /* New Workout Set */
