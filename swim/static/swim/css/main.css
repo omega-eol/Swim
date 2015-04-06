@@ -1,0 +1,88 @@
+@charset "utf-8";
+/* CSS Document */
+
+/* MAIN */
+html {
+	margin: 0;
+	padding: 0;
+	background-color: #F0F0F0; /*#FDFDFD;*/
+	/*
+	border-style: solid;
+	border-width: 1px;
+	*/
+}
+
+/* BODY */
+body {
+	font-family: Georgia, arial, serif;
+	font-size: 16px;
+	color: black;
+	margin: 0;
+	padding: 10px;
+}
+
+a {
+	margin-bottom: .5em;
+	text-decoration: none;
+	/*color: #757575;*/
+}
+a:hover {
+	border-bottom: 1px dotted black;
+	/*color: black;*/
+}
+
+/* NAVIGATION */
+header {
+	border-style: solid;
+	border-width: 1px;
+	height: 50px;
+}
+
+#swim_app_title {
+	float:left:
+}
+
+nav {
+	float: right;
+}
+nav ul {
+	list-style-type: none;
+	padding-top: 5;
+	margin: 0;
+	
+	border-style: solid;
+	border-width: 1px;
+	
+}
+nav li {
+	display: inline;
+	padding-left: 10px;
+}
+header nav a {
+	margin-bottom: .5em;
+	font-size: 16px;
+	text-decoration: none;
+}
+header nav a:hover {
+	border-bottom: 1px dotted black;
+	color: black;
+}
+
+/*
+footer {
+	margin-top: 0px;
+	padding-top: 0px;
+	padding-bottom: 0px;
+	position: relative;
+	height: 30px;
+}
+footer ul {
+	list-style-type: none;
+	padding-top: 5;
+	margin: 0;
+}
+footer li {
+	display: inline;
+	padding-left: 10px;
+}
+*/

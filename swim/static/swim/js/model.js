@@ -2,6 +2,7 @@
 var ExerciseStrokes = ["Free", "Breast", "Back", "IM", "Fly"];
 var ExerciseTypes = ["Swim", "Drill", "Kick"];
 var WorkoutSetTypes = ["Warm Up", "Pre Set", "Main Set", "Cool Down"];
+var WorkoutSetTypeColors = ['#FFFFB2', '#D6FFD6', '#FFCCCC', '#CCEBFF'];
 
 var User = function (first_name, last_name) {
 	this.first_name = first_name;
@@ -80,10 +81,11 @@ var Exercise = function (distance, stroke, type, interval) {
     };
 
     this.print = function () {
-    	return this.distance + " meters " + this.stroke + " " + this.type + " in " + this.interval + " seconds.";
+    	//return this.distance + " meters " + this.stroke + " " + this.type + " in " + this.interval + " seconds";
+    	return this.distance + " m " + this.stroke + " " + this.type + " in " + this.interval + " sec";
     };
     
-    if (debug) console.log("A new Exercise has been created");
+    //if (debug) console.log("A new Exercise has been created");
 };
 
 var ExerciseSet = function (order, repetitions, exercise, workoutSet) {
@@ -133,7 +135,7 @@ var ExerciseSet = function (order, repetitions, exercise, workoutSet) {
         return this.repetitions * this.exercise.interval;
     };
 
-    if (debug) console.log("A new ExerciseSet has been created");
+    //if (debug) console.log("A new ExerciseSet has been created");
 };
 
 var WorkoutSet = function (order, repetitions, type, workout) {
@@ -231,7 +233,7 @@ var WorkoutSet = function (order, repetitions, type, workout) {
     	return stroke_counts;
     };
     
-    if (debug) console.log("A new WorkoutSet has been created");
+    //if (debug) console.log("A new WorkoutSet has been created");
 };
 
 var Workout = function () {
@@ -445,7 +447,7 @@ var Workout = function () {
     };
     
     /* Log */
-    if (debug) console.log("A new Workout has been created");
+    //if (debug) console.log("A new Workout has been created");
 };
 
 /* Utils */
@@ -507,23 +509,3 @@ var findMaxOrder = function(workoutSets, type) {
 	};
 	return maxOrder;
 };
-
-var getClassNameByWorkoutSetType = function(type) {
-	var res = 'warm_up';
-	if (type === 'Pre Set') {
-		res = 'pre_set';
-	} else if (type === 'Main Set') {
-		res = 'main_set';
-	} else if (type === 'Cool Down') {
-		res = 'cool_down';
-	};
-	return res;
-};
-
-var getWorkoutSetArrayNameByType = function() {
-	var res = 'workout.warmUpSets';
-	return res;
-};
-
-
-

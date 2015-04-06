@@ -30,15 +30,21 @@ table.workoutSet_table th {
     border: 1px solid;
 }
 .workoutSet_col1 {
-    width: 10%;
-    text-align: center;
+    border-style: solid;
+	border-width: 1px;
+	position: relative;
 }
 .workoutSet_col2 {
     width: 70%;
+    border-style: solid;
+	border-width: 1px;
+	position: relative;
 }
 .workoutSet_col3 {
     width: 20%;
-    text-align: center;
+    position: relative;
+    border-style: solid;
+	border-width: 1px;
 }
 
 ul.workoutSets {
@@ -46,14 +52,23 @@ ul.workoutSets {
     padding: 0px;
 }
 ul.workoutSets li {
-	/*
-    border: 1px dashed #0000FF;
-    */
-    margin-bottom: 2px;
-    
+	margin-bottom: 2px;
 }
 ul.workoutSets table th {
     text-align: center;
+}
+
+/* Workout Set type control */
+div.workoutSetType {
+	text-align: center;
+	border-style: solid;
+	border-width: 1px;
+}
+
+div.numberOfRepetitionsWorkoutSet {
+	text-align: right;
+	border-style: solid;
+	border-width: 1px;
 }
 
 /* Sorting of Workout Set */ 
@@ -66,6 +81,21 @@ div.workoutSetSortingControl {
 	
 	border: 1px solid;
 	margin-bottom: 2px;
+}
+
+/* Delete workout set button class */
+.workoutSetRemoveBtn {
+	cursor: pointer;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	font-size: 14px;
+	padding: 2px;
+	color: red;
+	/*
+	border-style: solid;
+	border-width: 1px;
+	*/
 }
 
 /* Exercise Sets */
@@ -121,7 +151,7 @@ span.exerciseSetSortingControl {
 
 /* Delete Exercise Set Button */
 span.exerciseSetRemoveBtn {
-	cursor: move;
+	cursor: pointer;
 	width: 15px;
 	float: right;
 	/*

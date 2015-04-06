@@ -1,9 +1,3 @@
-<div>
-	<ul>
-		<li><a href="/#/exercises">Exercises</a></li>
-	</ul>
-</div>
-
 <span class="indexMsg">Choose a Workout or <span class="createNewWorkoutBtn">create new</span></span>
 
 <div ng-controller="WorkoutListCtrl">
@@ -29,7 +23,8 @@
         		<li>Average Speed: {{workout.printSpeed()}}</li>
         	</ul>
     		
-    		<!-- Visualization -->			
+    		<!-- Visualization -->
+    		<!-- 	
 			<div ng-controller="WorkoutListCharCtrl">
 				<ul class="chartContainer">
 					<li>
@@ -44,9 +39,14 @@
 					    <div class="chartTitle">Stroke Distribution</div>
 						<angularchart dataset="strokeDist.dataset" schema="strokeDist.schema" options="strokeDist.options"></angularchart>
 					</li>
+					
+					<li>
+					    <div class="chartTitle">Total Distance: {{workout.printDistance()}}</div>
+						<swim-graph data="distanceDist1" width="chart_width" height="chart_height" ylabel="dd_label"><swim-graph>
+					</li>
 				</ul>
 			</div>
-			
+			 -->
 			 
     	</li>
     </ul>

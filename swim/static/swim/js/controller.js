@@ -1,5 +1,4 @@
 var controllers = {};
-var debug = true;
 
 /* INDEX.HTML */
 controllers.WorkoutListCtrl = function ($scope, $route, workoutFactory) {
@@ -10,18 +9,46 @@ controllers.WorkoutListCtrl = function ($scope, $route, workoutFactory) {
 
 /* Chart controll */
 controllers.WorkoutListCharCtrl = function ($scope, visualization) {
+	// get the current workout
 	$scope.workout = $scope.$parent.workout;
-	console.log(visualization);
+	
+	// get chart dimensions
+	//$scope.chart_width = visualization.chart_width;
+	//$scope.chart_height = visualization.chart_height;
+	//$scope.dd_label = "Distance, m";
 	
 	// get data
-	$scope.intervalDist = visualization.IntervalDistByWorkourSetType($scope.workout);
-	$scope.distanceDist = visualization.DistanceDistByWorkourSetType($scope.workout);
-	$scope.strokeDist = visualization.StrokeDistribution($scope.$parent.workout);
+	//var distanceDistByWSType = {};
+	//distanceDistByWSType.data = visualization.DistanceDistByWorkourSetType($scope.workout);
+	//$scope.distanceDist = visualization.DistanceDistByWorkourSetType($scope.workout);
+	//$scope.distanceDist = visualization.DistanceDistTest($scope.workout);
+	
+	//$scope.strokeDist = visualization.StrokeDistribution($scope.$parent.workout);
+	
+	//$scope.distanceDist1 = visualization.DistanceDist($scope.workout);
 };
 
 /* Workout View/Edit page */
-controllers.WorkoutCtrl = function ($scope, $route, $routeParams, workoutFactory) {
-	$scope.workout = workoutFactory.get({id: $routeParams.id});
+controllers.WorkoutCtrl = function ($scope, $route, $routeParams, workoutFactory, visualization) {
+	$scope.workout = workoutFactory.get({id: $routeParams.id}, function(data) {
+		// get chart dimensions
+		$scope.chart_width = visualization.chart_width;
+		$scope.chart_height = visualization.chart_height;
+		
+		/* Distance distribution chart */
+	    var distanceDistByWSType = {};
+	    distanceDistByWSType.data = visualization.DistanceDistByWorkourSetType(data);
+	    distanceDistByWSType.ylabel = "Distance, m";
+		$scope.distanceDistByWSType = distanceDistByWSType;
+		
+		/* Interval distribution chart */
+		var intervalDistByWSType = {};
+		intervalDistByWSType.data = visualization.IntervalDistByWorkourSetType(data);
+		intervalDistByWSType.ylabel = "Time, min";
+		$scope.intervalDistByWSType = intervalDistByWSType;
+			
+		return data;
+	});
 	console.log($scope.workout);
 	
 	// list of workout sets types
@@ -33,7 +60,7 @@ controllers.WorkoutCtrl = function ($scope, $route, $routeParams, workoutFactory
     	if (debug ) console.log("Workout Set has been removed.");
     };
 
-    /* Fires when user change a workout set type */
+    /* Fires when an user change a workout set type */
     $scope.WorkoutSetTypeUpdate = function(workoutSet, originalType, index) {
     	if (debug) {
     		console.log("Workout Set: ", workoutSet);
@@ -250,7 +277,7 @@ controllers.ExerciseSetTestCtrl = function ($scope, exerciseSetFactory) {
 	};
 };
 
-//Controllers
+//Attach controllers to the app
 swimApp.controller(controllers);
 
 

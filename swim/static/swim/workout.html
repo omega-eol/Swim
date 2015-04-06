@@ -13,6 +13,21 @@
     </ul>
 
     <hr />
+    
+	<ul class="chartContainer">
+		<li>
+		    <div class="chartTitle">Total Distance: {{workout.printDistance()}}</div>
+			<swim-graph data="distanceDistByWSType.data" width="chart_width" height="chart_height" 
+						ylabel="distanceDistByWSType.ylabel"></swim-graph>
+		</li>
+		<li>
+		    <div class="chartTitle">Total Time: {{workout.printInterval()}}</div>
+			<swim-graph data="intervalDistByWSType.data" width="chart_width" height="chart_height" 
+						ylabel="intervalDistByWSType.ylabel"></swim-graph>
+		</li>
+	</ul>
+	
+	<hr />
 
     <!-- Workout Set Header -->
     <table class="workoutSet_table">
@@ -31,19 +46,21 @@
         	<!-- Workout Set sorting control -->
             <div class="fa fa-arrows-v workoutSetSortingControl"></div>
             
-            <table class="workoutSet_table">
+			<table class="workoutSet_table">
                 <tr>
                 	<td class="workoutSet_col1">
-                        <!-- Number of repetitions: Workout Set -->
-                        <input name="workoutSet_repetitions" class="repetitions" type="number" min="1" value="{{workoutSet.repetitions}}" 
-                            ng-model="workoutSet.repetitions"/>
+                	    <!-- Number of repetitions: Workout Set -->
+                	    <div class="numberOfRepetitionsWorkoutSet">
+	                        <input name="workoutSet_repetitions" class="repetitions" type="number" min="1" value="{{workoutSet.repetitions}}" 
+	                            ng-model="workoutSet.repetitions"/> x
+                        </div>
                         
                         <!-- Workout Set type -->
-                        <br />
-					    type:
-                        <select class="workoutSet_type" ng-options="type for type in WorkoutSetTypes" 
-                            ng-model="workoutSet.type" ng-change="WorkoutSetTypeUpdate(workoutSet, type, $index)">
-                        </select>
+                        <div class="workoutSetType">
+				            <select ng-options="type for type in WorkoutSetTypes" 
+				                ng-model="workoutSet.type" ng-change="WorkoutSetTypeUpdate(workoutSet, type, $index)">
+				            </select>
+			            </div>
                     </td>
 
                     <td class="workoutSet_col2">
@@ -109,6 +126,7 @@
                                             <!-- Stats -->
                                             <td class="exerciseSet_col3">
                                                 <span>{{exerciseSet.printDistance()}} in {{exerciseSet.printInterval()}}</span>
+                                                <!-- Remove Exercise Set button -->
                                                 <span title="Remove Exercise" class="fa fa-remove exerciseSetRemoveBtn" ng-click="RemoveExerciseSet($index)"></span>
                                             </td>
                                         </tr>
@@ -141,12 +159,18 @@
 
 					<!-- Exercise Set stats -->
                     <td class="workoutSet_col3">
+                    	<!-- Delete current Workout Set -->
+                    	<div class="workoutSetRemoveBtn" 
+                             ng-click="RemoveWorkoutSet(workout.getWorkoutSetByType(type), $index)" 
+                             title="Delete Workout Set">delete</div>
+                    	
                     	<!-- Actual Workout Set summary -->
-                        {{workoutSet.printDistance()}} in {{workoutSet.printInterval()}}</span>
+                        <div class="workoutSetSummary">{{workoutSet.printDistance()}} in {{workoutSet.printInterval()}}</div>
                         
-                    	<!-- Remove current Workout Set -->
+                    	<!-- 
                         <span class="fa fa-remove workoutSetRemoveBtn" 
                         	  ng-click="RemoveWorkoutSet(workout.getWorkoutSetByType(type), $index)" title="Remove Workout Set"></span>
+                        -->
                     </td>
 
                 </tr>

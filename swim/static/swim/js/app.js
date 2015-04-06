@@ -1,5 +1,5 @@
 // Initialize the Swim App
-var swimApp = angular.module('swimApp', ['ngRoute', 'ui.sortable', 'ngResource', 'ngCookies', 'angularChart'])
+var swimApp = angular.module('swimApp', ['ngRoute', 'ui.sortable', 'ngResource', 'ngCookies'])
 .provider('myCSRF',[function(){
 	var headerName = 'X-CSRFToken';
 	var cookieName = 'csrftoken';
@@ -40,3 +40,6 @@ swimApp.config(['$routeProvider',
 			templateUrl: '/static/swim/index.html',
 		}).otherwise({redirectTo:'/'});
 }]);
+
+// Global variables
+var debug = true;
